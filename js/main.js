@@ -252,30 +252,35 @@
     requestAnimationFrame(heartLoop);
   })();
 
-  // ─── Confetti ─────────────────────────────────────────────────────────
+  // ─── Confetti (burst on "celebrate" event) ─────────────────────────────
   const cfc = document.getElementById('confetti-canvas');
   const cfx = cfc.getContext('2d');
   cfc.width = window.innerWidth;
   cfc.height = window.innerHeight;
   const CFC = ['#c9a84c', '#f0d080', '#e8607a', '#ffc2d1', '#fff', '#ffb3c1'];
-  let cfp = [], cfon = true;
-  const mkp = () => ({
-    x: Math.random() * cfc.width, y: -10,
+  let cfp = [], cfon = false;
+  const mkp = (fromTop = true) => ({
+    x: Math.random() * cfc.width,
+    y: fromTop ? -10 : cfc.height + 10,
     w: R(4, 12), h: R(6, 20),
     col: CFC[Math.floor(Math.random() * CFC.length)],
     rot: R(0, Math.PI * 2), rv: R(-0.15, 0.15),
-    vx: R(-1.5, 1.5), vy: R(1, 3.5),
+    vx: R(-1.5, 1.5), vy: fromTop ? R(1, 3.5) : R(-3.5, -1),
   });
-  for (let i = 0; i < 80; i++) {
-    const p = mkp();
-    p.y = Math.random() * cfc.height;
-    cfp.push(p);
-  }
+  document.addEventListener('celebrate', () => {
+    for (let i = 0; i < 100; i++) {
+      const p = mkp(true);
+      if (i < 30) p.y = Math.random() * cfc.height * 0.5;
+      cfp.push(p);
+    }
+    cfon = true;
+    setTimeout(() => { cfon = false; cfx.clearRect(0, 0, cfc.width, cfc.height); }, 12000);
+  });
   let cff = 0;
   (function cfLoop() {
-    if (!cfon) return;
+    if (!cfon) return requestAnimationFrame(cfLoop);
     cfx.clearRect(0, 0, cfc.width, cfc.height);
-    if (++cff % 3 === 0 && cfp.length < 120) cfp.push(mkp());
+    if (++cff % 3 === 0 && cfp.length < 180) cfp.push(mkp(true));
     cfp = cfp.filter(p => p.y < cfc.height + 20);
     cfp.forEach(p => {
       p.x += p.vx; p.y += p.vy; p.rot += p.rv;
@@ -289,7 +294,63 @@
     });
     requestAnimationFrame(cfLoop);
   })();
-  setTimeout(() => { cfon = false; cfx.clearRect(0, 0, cfc.width, cfc.height); }, 8000);
+
+  // ─── Fireworks (burst on "celebrate") ─────────────────────────────────
+  const fwc = document.getElementById('fireworks-canvas');
+  if (fwc) {
+    const fwx = fwc.getContext('2d');
+    fwc.width = window.innerWidth;
+    fwc.height = window.innerHeight;
+    const FW_COLORS = ['#c9a84c', '#f0d080', '#e8607a', '#ffb3c1', '#fff', '#ff6b8a'];
+    let fwParticles = [];
+    document.addEventListener('celebrate', () => {
+      for (let b = 0; b < 5; b++) {
+        const bx = R(fwc.width * 0.2, fwc.width * 0.8);
+        const by = R(fwc.height * 0.2, fwc.height * 0.5);
+        for (let i = 0; i < 28; i++) {
+          const a = (i / 28) * Math.PI * 2 + Math.random();
+          const sp = R(3, 8);
+          fwParticles.push({
+            x: bx, y: by, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2,
+            col: FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)],
+            life: 1, decay: R(0.008, 0.02),
+          });
+        }
+      }
+    });
+    (function fwLoop() {
+      fwx.clearRect(0, 0, fwc.width, fwc.height);
+      fwParticles = fwParticles.filter(p => p.life > 0);
+      fwParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= p.decay;
+        fwx.save();
+        fwx.globalAlpha = p.life;
+        fwx.fillStyle = p.col;
+        fwx.beginPath();
+        fwx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        fwx.fill();
+        fwx.restore();
+      });
+      requestAnimationFrame(fwLoop);
+    })();
+  }
+
+  // ─── Extra hearts on "celebrate" ──────────────────────────────────────
+  document.addEventListener('celebrate', () => {
+    for (let i = 0; i < 18; i++) {
+      hearts2.push({
+        x: Math.random() * hc.width,
+        y: hc.height + Math.random() * 80,
+        sz: Math.random() * 10 + 5,
+        sp: Math.random() * 0.5 + 0.15,
+        dr: (Math.random() - 0.5) * 0.5,
+        al: Math.random() * 0.25 + 0.06,
+        rot: Math.random() * Math.PI * 2,
+        rv: (Math.random() - 0.5) * 0.015,
+        col: Math.random() > 0.5 ? '#e8607a' : '#c9a84c',
+      });
+    }
+  });
 
   // ─── Scroll reveal ────────────────────────────────────────────────────
   const ro = new IntersectionObserver(entries => {
@@ -441,7 +502,7 @@
 
   const PLAYLIST = [
     'music/Ordinary.m4a',
-    'music/1%20-%20Slow%20Motion.mp3'
+    'music/Slow%20Motion.m4a'
   ];
   let playlistIndex = 0;
 
@@ -480,11 +541,14 @@
   });
 
   const startModal = document.getElementById('start-modal');
+  const mainContent = document.getElementById('main-content');
   if (startModal) {
     startModal.addEventListener('click', () => {
       music.volume = 0.4;
       playCurrentTrack();
       startModal.classList.add('hidden');
+      document.dispatchEvent(new CustomEvent('celebrate'));
+      if (mainContent) mainContent.classList.remove('main-content--hidden');
     }, { once: true });
   }
 
@@ -503,7 +567,7 @@
 
   // ─── Resize ──────────────────────────────────────────────────────────
   window.addEventListener('resize', () => {
-    [cc, bc, sc, hc, cfc].forEach(c => {
+    [cc, bc, sc, hc, cfc, document.getElementById('fireworks-canvas')].filter(Boolean).forEach(c => {
       c.width = window.innerWidth;
       c.height = window.innerHeight;
     });

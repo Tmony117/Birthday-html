@@ -31,6 +31,7 @@ body {
 #hearts-canvas,
 #stars-canvas,
 #confetti-canvas,
+#fireworks-canvas,
 #candle-canvas {
   position: fixed;
   top: 0;
@@ -43,7 +44,19 @@ body {
 #stars-canvas { z-index: 1; }
 #hearts-canvas { z-index: 2; }
 #confetti-canvas { z-index: 500; }
+#fireworks-canvas { z-index: 501; }
 #candle-canvas { z-index: 9999; }
+
+/* ── Main content (fades in after tap to begin) ── */
+.main-content {
+  position: relative;
+  z-index: 10;
+  transition: opacity 0.8s ease;
+}
+.main-content--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* ── Grain ── */
 .grain {
