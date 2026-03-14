@@ -479,10 +479,16 @@
   const mBtn = document.getElementById('music-btn');
   const eqBars = document.querySelectorAll('.eq-bar');
   music.volume = 0.4;
+  music.loop = false; // We'll handle looping manually
+
+  // Mute all other media elements
+  document.querySelectorAll('video').forEach(video => {
+    video.muted = true;
+  });
 
   const PLAYLIST = [
     'music/Ordinary.m4a',
-    'music/Slow%20Motion.m4a'
+    'music/SlowMotion.mp3'
   ];
   let playlistIndex = 0;
 
@@ -522,14 +528,37 @@
 
   const startModal = document.getElementById('start-modal');
   const mainContent = document.getElementById('main-content');
+  const startModalMessage = document.getElementById('start-modal-message');
+  
+  function isBirthdayTime() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const birthdayTime = new Date(currentYear, 2, 15, 0, 0, 0); // March 15, 12:00 AM
+    return now >= birthdayTime;
+  }
+  
+  function updateStartModal() {
+    if (isBirthdayTime()) {
+      startModalMessage.textContent = 'Tap to begin';
+      startModal.style.cursor = 'pointer';
+      startModal.addEventListener('click', () => {
+        music.volume = 0.4;
+        playCurrentTrack();
+        startModal.classList.add('hidden');
+        document.dispatchEvent(new CustomEvent('celebrate'));
+        if (mainContent) mainContent.classList.remove('main-content--hidden');
+      }, { once: true });
+    } else {
+      startModalMessage.textContent = 'Come back on March 15th for your birthday surprise! 🎂';
+      startModal.style.cursor = 'not-allowed';
+      
+      // Check every minute
+      setTimeout(updateStartModal, 60000);
+    }
+  }
+  
   if (startModal) {
-    startModal.addEventListener('click', () => {
-      music.volume = 0.4;
-      playCurrentTrack();
-      startModal.classList.add('hidden');
-      document.dispatchEvent(new CustomEvent('celebrate'));
-      if (mainContent) mainContent.classList.remove('main-content--hidden');
-    }, { once: true });
+    updateStartModal();
   }
 
   // ─── Floating emojis on click ─────────────────────────────────────────
