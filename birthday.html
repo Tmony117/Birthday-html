@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Yaw Okoree 🕯️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<audio id="bg-music" loop preload="none">
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_fbc6c6dc2a.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="stars-canvas"></canvas>
+<canvas id="hearts-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+<canvas id="candle-canvas"></canvas>
+<div class="grain"></div>
+
+<!-- MUSIC BAR -->
+<div id="music-bar">
+  <div class="eq-bars" id="eq">
+    <div class="eq-bar paused"></div>
+    <div class="eq-bar paused"></div>
+    <div class="eq-bar paused"></div>
+    <div class="eq-bar paused"></div>
+  </div>
+  <button id="music-btn">♪ Play</button>
+  <span class="music-label">Romantic · Bensound</span>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-label">Made with love, just for you</p>
+  <h1 class="hero-title">
+    <span class="line1">Happy Birthday</span>
+    <span class="line2">Yaw Okoree</span>
+  </h1>
+  <p class="hero-date">March 15 &nbsp;·&nbsp; My favourite person in the world</p>
+  <div class="love-word-wrap">
+    My &nbsp;<span class="love-word" id="loveWord">sunshine</span>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrapper">
+  <div class="marquee-track">
+    <span class="marquee-item">Happy Birthday Yaw Okoree</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">You Mean Everything</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">March 15</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">Forever Yours</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">My Favourite Person</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">Happy Birthday Yaw Okoree</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">You Mean Everything</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">March 15</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">Forever Yours</span><span class="marquee-item">♥</span>
+    <span class="marquee-item">My Favourite Person</span><span class="marquee-item">♥</span>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<section id="journey">
+  <div class="section-header reveal">
+    <span class="section-tag">Every version of you</span>
+    <h2 class="section-title">My <span class="word-cycle" id="galWord">Favourite Boy</span></h2>
+  </div>
+  <div class="gallery-controls reveal">
+    <button class="btn-ghost active" id="btn-grid">⊞ Grid</button>
+    <button class="btn-ghost" id="btn-slideshow">▶ Slideshow</button>
+  </div>
+  <div class="photo-wall" id="photoWall">
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.52.jpg" alt="Early Days"><div class="photo-overlay"><span class="photo-year">Early Days</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.40.jpg" alt="Growing Up"><div class="photo-overlay"><span class="photo-year">Growing Up</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.44.jpg" alt="Teen Years"><div class="photo-overlay"><span class="photo-year">Teen Years</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.33.jpg" alt="Teen Years"><div class="photo-overlay"><span class="photo-year">Teen Years</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.29.jpg" alt="Young Adult"><div class="photo-overlay"><span class="photo-year">Young Adult</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.09.51.jpg" alt="Present Day"><div class="photo-overlay"><span class="photo-year">Present Day</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.09.56.jpg" alt="Portrait"><div class="photo-overlay"><span class="photo-year">Portrait</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.01.jpg" alt="Sharp Look"><div class="photo-overlay"><span class="photo-year">Sharp Look</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.06.jpg" alt="Vibes"><div class="photo-overlay"><span class="photo-year">Vibes</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.10.jpg" alt="Knowledge"><div class="photo-overlay"><span class="photo-year">Knowledge</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.10.14.jpg" alt="That Smile"><div class="photo-overlay"><span class="photo-year">That Smile</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.09.19.jpg" alt="Casual"><div class="photo-overlay"><span class="photo-year">Casual</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.09.25.jpg" alt="Mirror Selfie"><div class="photo-overlay"><span class="photo-year">Mirror Selfie</span></div></div>
+    <div class="photo-card"><img src="images/2026-03-11%2000.08.58.jpg" alt="Outdoors"><div class="photo-overlay"><span class="photo-year">Outdoors</span></div></div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video-section">
+  <div class="section-header reveal">
+    <span class="section-tag">Just for you</span>
+    <h2 class="section-title">Your Moments</h2>
+  </div>
+  <div class="video-wrapper reveal">
+    <video controls playsinline poster="images/2026-03-11%2000.09.25.jpg">
+      <source src="images/2026-03-11%2000.10.24.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
+<!-- MESSAGE -->
+<section id="message">
+  <div class="message-card reveal">
+    <p class="message-quote">
+      "From the very first moment, I knew you were someone special.
+      Watching you grow, laugh, and move through this world with such
+      effortless grace is my greatest privilege. Happy birthday, Yaw —
+      every single day with you is a gift I never take for granted.
+      Here's to forever with you."
+    </p>
+    <p class="message-sig">Forever yours, with all my love &nbsp;·&nbsp; March 15 💛</p>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-name">Happy Birthday, Yaw Okoree 💛</p>
+  <p class="footer-sub">March 15 &nbsp;·&nbsp; Made with love, just for you</p>
+</footer>
+
+<!-- SLIDESHOW OVERLAY -->
+<div id="slideshow">
+  <button type="button" class="ss-close" aria-label="Close slideshow">✕</button>
+  <div class="ss-img-wrap" id="ssWrap">
+    <div class="ss-progress" id="ssBar"></div>
+  </div>
+  <p class="ss-caption" id="ssCap">Early Days</p>
+  <div class="ss-controls">
+    <button type="button" class="ss-btn" aria-label="Previous">‹</button>
+    <button type="button" class="ss-btn" id="ssPlayBtn" aria-label="Pause">⏸</button>
+    <button type="button" class="ss-btn" aria-label="Next">›</button>
+  </div>
+  <div class="ss-counter" id="ssCtr">1 / 14</div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button type="button" class="lightbox-close" aria-label="Close">✕</button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
