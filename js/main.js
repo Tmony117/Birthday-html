@@ -9,7 +9,7 @@
   const R = (a, b) => a + Math.random() * (b - a);
 
   // ─── Love words cycle ─────────────────────────────────────────────────
-  const loveWords = ['sunshine', 'everything', 'heartbeat', 'whole world', 'safe place', 'king', 'forever', 'greatest joy', 'answered prayer', 'love story'];
+  const loveWords = ['sunshine', 'everything', 'heartbeat', 'whole world', 'safe place', 'king',  'greatest joy', 'answered prayer', 'love story'];
   const galWords = ['Favourite Boy', 'Endless Love', 'Greatest Adventure', 'Answered Prayer', 'Whole World', 'Shining Star'];
   let lwi = 0, gwi = 0;
 
