@@ -8,26 +8,6 @@
 
   const R = (a, b) => a + Math.random() * (b - a);
 
-  // ─── Love words cycle ─────────────────────────────────────────────────
-  const loveWords = ['sunshine', 'everything', 'heartbeat', 'whole world', 'safe place', 'king',  'greatest joy', 'answered prayer', 'love story'];
-  const galWords = ['Favourite Boy', 'Endless Love', 'Greatest Adventure', 'Answered Prayer', 'Whole World', 'Shining Star'];
-  let lwi = 0, gwi = 0;
-
-  function cycleWord(el, arr, i) {
-    el.classList.add('flip');
-    setTimeout(() => {
-      i = (i + 1) % arr.length;
-      el.textContent = arr[i];
-      el.classList.remove('flip');
-    }, 250);
-    return i;
-  }
-
-  const loveWordEl = document.getElementById('loveWord');
-  const galWordEl = document.getElementById('galWord');
-  if (loveWordEl) setInterval(() => { lwi = cycleWord(loveWordEl, loveWords, lwi); }, 2800);
-  if (galWordEl) setInterval(() => { gwi = cycleWord(galWordEl, galWords, gwi); }, 3600);
-
   // ─── Burning candle cursor ────────────────────────────────────────────
   const cc = document.getElementById('candle-canvas');
   const cx = cc.getContext('2d');
