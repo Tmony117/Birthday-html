@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Happy Birthday, Yaw Okoree 🕯️</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 
-<audio id="bg-music" loop preload="none">
-  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_fbc6c6dc2a.mp3" type="audio/mpeg">
-</audio>
+<audio id="bg-music" preload="auto"></audio>
 
 <canvas id="bg-canvas"></canvas>
 <canvas id="stars-canvas"></canvas>
@@ -20,6 +17,14 @@
 <canvas id="confetti-canvas"></canvas>
 <canvas id="candle-canvas"></canvas>
 <div class="grain"></div>
+
+<!-- START MODAL (tap to begin & play music) -->
+<div id="start-modal" class="start-modal" role="dialog" aria-label="Start">
+  <div class="start-modal-inner">
+    <p class="start-modal-title">Happy Birthday</p>
+    <p class="start-modal-sub">Tap to begin</p>
+  </div>
+</div>
 
 <!-- MUSIC BAR -->
 <div id="music-bar">
@@ -30,7 +35,7 @@
     <div class="eq-bar paused"></div>
   </div>
   <button id="music-btn">♪ Play</button>
-  <span class="music-label">Romantic · Bensound</span>
+  <span class="music-label">Ordinary</span>
 </div>
 
 <!-- HERO -->
@@ -38,7 +43,7 @@
   <p class="hero-label">Made with love, just for you</p>
   <h1 class="hero-title">
     <span class="line1">Happy Birthday</span>
-    <span class="line2">Yaw Okoree</span>
+    <span class="line2">Yaw</span>
   </h1>
   <p class="hero-date">March 15 &nbsp;·&nbsp; My favourite person in the world</p>
   <div class="love-word-wrap">

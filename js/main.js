@@ -433,30 +433,65 @@
     if (e.key === 'Escape') closeSlideshow();
   });
 
-  // ─── Music ───────────────────────────────────────────────────────────
+  // ─── Music (playlist: all tracks in music dir) ─────────────────────────
   const music = document.getElementById('bg-music');
   const mBtn = document.getElementById('music-btn');
   const eqBars = document.querySelectorAll('.eq-bar');
   music.volume = 0.4;
+
+  const PLAYLIST = [
+    'music/Ordinary.m4a',
+    'music/1%20-%20Slow%20Motion.mp3'
+  ];
+  let playlistIndex = 0;
+
+  function updateMusicUI(playing) {
+    window._musicOn = playing;
+    mBtn.textContent = playing ? '♪ Pause' : '♪ Play';
+    eqBars.forEach(b => b.classList.toggle('paused', !playing));
+  }
+
+  function playCurrentTrack() {
+    if (!PLAYLIST.length) return;
+    music.src = PLAYLIST[playlistIndex];
+    music.play().then(() => updateMusicUI(true)).catch(() => updateMusicUI(false));
+  }
+
+  music.addEventListener('ended', () => {
+    playlistIndex = (playlistIndex + 1) % PLAYLIST.length;
+    playCurrentTrack();
+  });
+
+  music.addEventListener('error', () => {
+    if (music.error && window.location.protocol === 'file:') {
+      console.warn('Music could not load. Open the site via a local server (e.g. run "npx serve" in this folder and visit http://localhost:3000)');
+    }
+    updateMusicUI(false);
+  });
+
   mBtn.addEventListener('click', () => {
     if (window._musicOn) {
       music.pause();
-      mBtn.textContent = '♪ Play';
-      eqBars.forEach(b => b.classList.add('paused'));
-      window._musicOn = false;
+      updateMusicUI(false);
     } else {
-      music.play().then(() => {
-        mBtn.textContent = '♪ Pause';
-        eqBars.forEach(b => b.classList.remove('paused'));
-        window._musicOn = true;
-      }).catch(() => { mBtn.textContent = '♪ Play'; });
+      if (!music.src) playCurrentTrack();
+      else music.play().then(() => updateMusicUI(true)).catch(() => updateMusicUI(false));
     }
   });
+
+  const startModal = document.getElementById('start-modal');
+  if (startModal) {
+    startModal.addEventListener('click', () => {
+      music.volume = 0.4;
+      playCurrentTrack();
+      startModal.classList.add('hidden');
+    }, { once: true });
+  }
 
   // ─── Floating emojis on click ─────────────────────────────────────────
   const EJ = ['🎂', '💛', '🥳', '✨', '💕', '🎁', '💝', '🌹', '💖', '🕯️'];
   document.addEventListener('click', e => {
-    if (e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === 'BUTTON' || e.target.closest('#start-modal')) return;
     const f = document.createElement('div');
     f.className = 'floater';
     f.textContent = EJ[Math.floor(Math.random() * EJ.length)];
