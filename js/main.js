@@ -8,6 +8,122 @@
 
   const R = (a, b) => a + Math.random() * (b - a);
 
+  // ─── Performance optimization ──────────────────────────────────────
+  let fps = 60;
+  let frameCount = 0;
+  let lastTime = performance.now();
+  let isLowPerfDevice = false;
+  let manualLowPerf = false;
+  
+  // Detect low performance devices
+  function checkPerformance() {
+    frameCount++;
+    const currentTime = performance.now();
+    if (currentTime - lastTime >= 1000) {
+      fps = frameCount;
+      frameCount = 0;
+      lastTime = currentTime;
+      
+      // Reduce quality if FPS drops below 30
+      if (fps < 30 && !isLowPerfDevice && !manualLowPerf) {
+        isLowPerfDevice = true;
+        console.log('Low performance detected - reducing animation quality');
+        reduceAnimationQuality();
+      } else if (fps >= 45 && isLowPerfDevice && !manualLowPerf) {
+        isLowPerfDevice = false;
+        console.log('Performance restored - increasing animation quality');
+      }
+    }
+  }
+  
+  function reduceAnimationQuality() {
+    // Reduce particle counts for low performance devices
+    if (parts.length > 30) {
+      parts.splice(30); // Keep only 30 particles
+    }
+    if (hearts2.length > 8) {
+      hearts2.splice(8); // Keep only 8 hearts
+    }
+    if (stars.length > 60) {
+      stars.splice(60); // Keep only 60 stars
+    }
+  }
+  
+  function restoreAnimationQuality() {
+    // Restore particle counts
+    const targetParts = 60;
+    const targetHearts = 15;
+    const targetStars = 120;
+    
+    while (parts.length < targetParts) {
+      const base = R(0.08, 0.35);
+      parts.push({
+        x: R(0, bc.width), y: R(0, bc.height),
+        vx: R(-0.25, 0.25), vy: R(-0.4, 0.05),
+        ax: 0, ay: 0,
+        size: R(9, 22),
+        sym: SYM[Math.floor(Math.random() * SYM.length)],
+        col: PCOL[Math.floor(Math.random() * PCOL.length)],
+        alpha: base, base,
+        rot: R(0, Math.PI * 2), rv: R(-0.01, 0.01),
+        mass: R(0.6, 2),
+      });
+    }
+    
+    while (hearts2.length < targetHearts) {
+      hearts2.push({
+        x: Math.random() * hc.width,
+        y: Math.random() * hc.height + hc.height,
+        sz: Math.random() * 9 + 4,
+        sp: Math.random() * 0.35 + 0.1,
+        dr: (Math.random() - 0.5) * 0.4,
+        al: Math.random() * 0.22 + 0.04,
+        rot: Math.random() * Math.PI * 2,
+        rv: (Math.random() - 0.5) * 0.012,
+        col: Math.random() > 0.5 ? '#e8607a' : '#c9a84c',
+      });
+    }
+    
+    while (stars.length < targetStars) {
+      stars.push({
+        x: Math.random() * sc.width,
+        y: Math.random() * sc.height,
+        r: Math.random() * 1.3 + 0.2,
+        ph: Math.random() * Math.PI * 2,
+        sp: Math.random() * 0.008 + 0.003,
+      });
+    }
+  }
+  
+  function togglePerformanceMode() {
+    manualLowPerf = !manualLowPerf;
+    const perfBtn = document.getElementById('perf-btn');
+    
+    if (manualLowPerf) {
+      isLowPerfDevice = true;
+      reduceAnimationQuality();
+      perfBtn.style.background = 'rgba(201, 168, 76, 0.3)';
+      perfBtn.title = 'High Performance Mode';
+    } else {
+      isLowPerfDevice = false;
+      restoreAnimationQuality();
+      perfBtn.style.background = 'none';
+      perfBtn.title = 'Toggle Performance Mode';
+    }
+  }
+
+  // ─── Mobile optimizations ───────────────────────────────────────────
+  // Reduce particles on mobile devices for better performance
+  if (window.innerWidth <= 768) {
+    isLowPerfDevice = true;
+    reduceAnimationQuality();
+  }
+  
+  // Add touch-friendly hover states
+  if ('ontouchstart' in window) {
+    document.body.classList.add('touch-device');
+  }
+
   // ─── Burning candle cursor ────────────────────────────────────────────
   const cc = document.getElementById('candle-canvas');
   const cx = cc.getContext('2d');
@@ -102,7 +218,7 @@
   const SYM = ['♥', '✦', '★', '✿', '♡', '✧', '·', '❋', '✶'];
   const PCOL = ['#c9a84c', '#e8607a', '#f0d080', '#ffb3c1', '#fff8ec', '#a78bfa', '#ffd9e8'];
 
-  const parts = Array.from({ length: 100 }, () => {
+  const parts = Array.from({ length: 60 }, () => {
     const base = R(0.08, 0.35);
     return {
       x: R(0, bc.width), y: R(0, bc.height),
@@ -119,7 +235,14 @@
 
   const REPEL = 160, REPELF = 0.65, ATT = 300, ATTF = 0.035;
 
+  let frameSkip = 0;
   (function bgLoop() {
+    checkPerformance();
+    frameSkip++;
+    if (isLowPerfDevice && frameSkip % 2 !== 0) {
+      requestAnimationFrame(bgLoop);
+      return;
+    }
     bx.clearRect(0, 0, bc.width, bc.height);
     const t = performance.now() / 1000;
     parts.forEach(p => {
@@ -165,14 +288,20 @@
   const sx = sc.getContext('2d');
   sc.width = window.innerWidth;
   sc.height = window.innerHeight;
-  const stars = Array.from({ length: 180 }, () => ({
+  const stars = Array.from({ length: isLowPerfDevice ? 80 : 120 }, () => ({
     x: Math.random() * sc.width,
     y: Math.random() * sc.height,
     r: Math.random() * 1.3 + 0.2,
     ph: Math.random() * Math.PI * 2,
     sp: Math.random() * 0.008 + 0.003,
   }));
+  let starFrameSkip = 0;
   (function starLoop() {
+    starFrameSkip++;
+    if (isLowPerfDevice && starFrameSkip % 3 !== 0) {
+      requestAnimationFrame(starLoop);
+      return;
+    }
     sx.clearRect(0, 0, sc.width, sc.height);
     const t = performance.now() / 1000;
     stars.forEach(s => {
@@ -203,7 +332,7 @@
     ctx.restore();
   }
 
-  const hearts2 = Array.from({ length: 20 }, () => ({
+  const hearts2 = Array.from({ length: isLowPerfDevice ? 10 : 15 }, () => ({
     x: Math.random() * hc.width,
     y: Math.random() * hc.height + hc.height,
     sz: Math.random() * 9 + 4,
@@ -215,7 +344,13 @@
     col: Math.random() > 0.5 ? '#e8607a' : '#c9a84c',
   }));
 
+  let heartFrameSkip = 0;
   (function heartLoop() {
+    heartFrameSkip++;
+    if (isLowPerfDevice && heartFrameSkip % 2 !== 0) {
+      requestAnimationFrame(heartLoop);
+      return;
+    }
     hx.clearRect(0, 0, hc.width, hc.height);
     hearts2.forEach(h => {
       h.y -= h.sp; h.x += h.dr; h.rot += h.rv;
@@ -526,6 +661,12 @@
     }
   });
 
+  // Performance toggle button
+  const perfBtn = document.getElementById('perf-btn');
+  if (perfBtn) {
+    perfBtn.addEventListener('click', togglePerformanceMode);
+  }
+
   const startModal = document.getElementById('start-modal');
   const mainContent = document.getElementById('main-content');
   const startModalMessage = document.getElementById('start-modal-message');
@@ -549,11 +690,37 @@
         if (mainContent) mainContent.classList.remove('main-content--hidden');
       }, { once: true });
     } else {
-      startModalMessage.textContent = 'Come back on March 15th for your birthday surprise! 🎂';
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const birthdayTime = new Date(currentYear, 2, 15, 0, 0, 0); // March 15, 12:00 AM
+      const timeDiff = birthdayTime - now;
+      
+      if (timeDiff > 0) {
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        
+        let countdownText = 'Come back on March 15th for your birthday surprise! 🎂\n';
+        if (days > 0) {
+          countdownText += `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else if (hours > 0) {
+          countdownText += `${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+          countdownText += `${minutes}m ${seconds}s`;
+        } else {
+          countdownText += `${seconds}s`;
+        }
+        
+        startModalMessage.innerHTML = countdownText.replace('\n', '<br>');
+      } else {
+        startModalMessage.textContent = 'Come back on March 15th for your birthday surprise! 🎂';
+      }
+      
       startModal.style.cursor = 'not-allowed';
       
-      // Check every minute
-      setTimeout(updateStartModal, 60000);
+      // Update every second for countdown
+      setTimeout(updateStartModal, 1000);
     }
   }
   
